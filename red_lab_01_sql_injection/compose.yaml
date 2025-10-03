@@ -1,0 +1,40 @@
+name: red_lab_01_sql_injection
+
+services:
+  db:
+    image: mysql:latest
+    container_name: sql_lab_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-rootpass}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-userdb}"
+      MYSQL_USER: "${MYSQL_USER:-app}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-app123}"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - labnet
+
+  web:
+    build: ./web
+    container_name: sql_lab_web
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_NAME: "${MYSQL_DATABASE:-userdb}"
+      DB_USER: "${MYSQL_USER:-app}"
+      DB_PASS: "${MYSQL_PASSWORD:-app123}"
+    ports:
+      - "8080:80"
+    networks:
+      - labnet
+    restart: unless-stopped
+
+volumes:
+  db_data:
+
+networks:
+  labnet:
+    driver: bridge
