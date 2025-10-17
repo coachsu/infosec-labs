@@ -16,6 +16,6 @@ INSERT INTO users (name, username, password, email, role) VALUES
 ('Alice Admin','admin','secret123','alice.admin@example.com','admin'),
 ('Bob Student','bob','bobpass','bob@student.com','user'),
 ('Charlie','charlie','charliepass','charlie@test.com','user'),
-('David Guest','david','guest123','david@example.com','guest'),
-('Eva Teacher','eva','teachpass','eva@school.edu','admin'),
-('Frank Tester','frank','testpass','frank@demo.net','user');
+('David Guest','david','davidpadd','david@example.com','guest'),
+('Eva Teacher','eva','evapass','eva@school.edu','admin'),
+('Frank Tester','frank','frankpass','frank@demo.net','user');

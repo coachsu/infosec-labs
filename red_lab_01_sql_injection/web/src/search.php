@@ -1,6 +1,5 @@
 <?php
 // search.php — SQL 注入攻擊教學用
-// 請勿在公網或生產環境使用！
 
 $host = getenv('DB_HOST') ?: 'db';
 $db   = getenv('DB_NAME') ?: 'userdb';
@@ -13,36 +12,44 @@ if ($conn->connect_error) {
 }
 $conn->set_charset('utf8mb4');
 
-$q = isset($_GET['q']) ? trim($_GET['q']) : '';
+$q = isset($_GET['q']) ? ($_GET['q']) : '';
 $ran_sql = null;
 $elapsed = null;
 $result_rows = [];
 $fields = [];
 
 if ($q !== '') {
-    // 這裡故意直接拼接字串(不使用 prepared statements)以便教學 SQL 注入攻擊
     $sql = "SELECT id, name, username, email, role FROM users WHERE username = '$q' OR name = '$q' OR email = '$q' OR role = '$q'";
     $ran_sql = $sql;
     $start = microtime(true);
-    $res = $conn->query($sql);
-    $elapsed = round((microtime(true) - $start) * 1000, 2);
-
-    if ($res instanceof mysqli_result) {
-        while ($row = $res->fetch_assoc()) {
+    try {
+      $conn->multi_query($sql);
+      do {
+        if($res = $conn->store_result()) {
+          while ($row = $res->fetch_assoc()) {
             $result_rows[] = $row;
-        }
-        foreach ($res->fetch_fields() as $f) {
+          }
+          foreach ($res->fetch_fields() as $f) {
             $fields[] = $f->name;
+          }
+          if (empty($fields) && !empty($result_rows)) {
+              $fields = array_keys($result_rows[0]);
+          }
+          $res->free();
+        } else {
+          if($conn->errno) {
+              $error_msg = $conn->error;
+              break;
+          } else {
+              $affected = $conn->affected_rows;
+          }
         }
-        // If fetch_fields returned empty due to pointer moved, rebuild from first row keys
-        if (empty($fields) && !empty($result_rows)) {
-            $fields = array_keys($result_rows[0]);
-        }
-        if ($res) $res->free();
-    } else {
-        // Query error
-        $error_msg = $conn->error;
+      } while($conn->more_results() && $conn->next_result());
+    } catch (Exception $e) {
+        $error_msg = $e->getMessage();
     }
+    
+    $elapsed = round((microtime(true) - $start) * 1000, 2);
 }
 ?>
 <!doctype html>
@@ -73,14 +80,14 @@ input[type=text]{width:100%;padding:10px;border:1px solid #e6edf3;border-radius:
 <body>
   <div class="wrap">
     <div class="card">
-      <h2>搜尋</h2>
-      <p class="small">此搜尋頁示範不安全的 SQL 字串拼接(故意留有注入風險)。可搜尋 username / name / email / role。僅供本機/內網教學。</p>
+      <h2>搜尋(SQL 注入攻擊教學用)</h2>
+      <p class="small">可關鍵字搜尋 username / name / email / role。</p>
 
       <form method="get" autocomplete="off">
         <label class="small">搜尋字串(精確比對)：</label>
         <input type="text" name="q" placeholder="例如：admin" value="<?php echo htmlspecialchars($q); ?>">
         <div class="controls">
-          <button class="btn btn-primary" type="submit">Search</button>
+          <button class="btn btn-primary" type="submit">搜尋</button>
           <button class="btn" type="button" onclick="location.href='index.php';">清除</button>
         </div>
       </form>
@@ -90,7 +97,7 @@ input[type=text]{width:100%;padding:10px;border:1px solid #e6edf3;border-radius:
       <?php endif; ?>
 
       <?php if ($ran_sql): ?>
-        <div class="meta"><strong>Query run：</strong>
+        <div class="meta"><strong>執行 SQL：</strong>
           <pre style="background:#fafafa;padding:8px;border-radius:6px;border:1px solid #eee;white-space:pre-wrap;"><?php echo htmlspecialchars($ran_sql); ?></pre>
           <?php if ($elapsed !== null): ?>
             耗時：<?php echo htmlspecialchars($elapsed); ?> ms
@@ -124,8 +131,8 @@ input[type=text]{width:100%;padding:10px;border:1px solid #e6edf3;border-radius:
       <?php endif; ?>
 
       <div class="footer">
-        <a href="index.php">回到登入頁面</a>|
         <a href="sql.php">回到 SQL 練習頁面</a>
+        <a href="index.php">回到登入頁面</a>|
       </div>
     </div>
   </div>

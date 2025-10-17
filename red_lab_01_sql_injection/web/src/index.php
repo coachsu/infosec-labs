@@ -1,6 +1,5 @@
 <?php
 // index.php — SQL 注入攻擊教學用
-// 請勿在公網或生產環境使用！
 
 $host = getenv('DB_HOST') ?: 'db';
 $db   = getenv('DB_NAME') ?: 'userdb';
@@ -19,16 +18,19 @@ $elapsed = null;
 $logged_in_row = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // 這裡故意直接拼接字串(不使用 prepared statements)以便教學 SQL 注入攻擊
     $username = isset($_POST['username']) ? $_POST['username'] : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
 
-    // 顯式示範易被注入的寫法(※ 教學用途)
     $sql = "SELECT id, name, username, email, role FROM users WHERE username = '$username' AND password = '$password' LIMIT 1";
     $ran_sql = $sql;
 
     $start = microtime(true);
-    $res = $conn->query($sql);
+    try {
+        $res = $conn->query($sql);
+    } catch (Exception $e) {
+        $message = "<div class='error'>Query error: " . htmlspecialchars($e->getMessage()) . "</div>";
+        $res = false;
+    }
     $elapsed = round((microtime(true) - $start) * 1000, 2);
 
     if ($res && $res->num_rows > 0) {
@@ -45,13 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>登入(SQL 注入攻擊教學用)</title>
+<title>登入</title>
 <style>
 body{font-family:system-ui,Segoe UI,Roboto,"Noto Sans TC",sans-serif;background:#f5f7fa;margin:0;color:#111}
 .wrap{max-width:900px;margin:28px auto;padding:18px}
 .card{background:#fff;padding:16px;border-radius:10px;box-shadow:0 1px 4px rgba(16,24,40,0.06)}
 label.small{font-size:13px;color:#666}
-input[type=text], input[type=password]{width:100%;padding:10px;border:1px solid #e6edf3;border-radius:8px;font-size:14px}
+input[type=text], input[type=password]{width:100%;padding:10px;border:2px solid #e6edf3;border-radius:8px;font-size:14px}
 .controls{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
 .btn{padding:8px 12px;border-radius:8px;border:1px solid #e6edf3;background:#fff;cursor:pointer}
 .btn-primary{background:#0066ff;color:#fff;border-color:#0066ff}
@@ -67,24 +69,24 @@ hr{border:none;height:1px;background:#eee;margin:16px 0}
 <body>
   <div class="wrap">
     <div class="card">
-      <h2>登入</h2>
-      <p class="small">此頁面故意含有 SQL 注入漏洞(直接以字串拼接 SQL。僅限本機/內網練習使用，請勿公開於網際網路。</p>
+      <h2>登入(SQL 注入攻擊教學用)</h2>
+      <p class="small">請輸入帳號/密碼</p>
 
       <form method="post" autocomplete="off">
         <div style="display:grid;grid-template-columns:1fr;gap:12px">
           <div>
-            <label class="small">Username</label>
+            <label class="small">帳號</label>
             <input name="username" type="text" placeholder="例如：admin" value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : '' ?>">
           </div>
           <div>
-            <label class="small">Password</label>
+            <label class="small">密碼</label>
             <!-- 為了注入練習方便，仍使用 text（非 password）便於看見輸入 -->
             <input name="password" type="text" placeholder="例如：secret123 或 anything" value="<?php echo isset($_POST['password']) ? htmlspecialchars($_POST['password']) : '' ?>">
           </div>
         </div>
 
         <div class="controls">
-          <button class="btn btn-primary" type="submit">Login</button>
+          <button class="btn btn-primary" type="submit">登入</button>
           <button class="btn" type="button" onclick="document.querySelector('[name=username]').value='';document.querySelector('[name=password]').value='';">清除</button>
         </div>
       </form>
@@ -97,7 +99,7 @@ hr{border:none;height:1px;background:#eee;margin:16px 0}
 
       <?php if ($ran_sql): ?>
         <div class="meta">
-          <strong>Query run：</strong>
+          <strong>執行 SQL：</strong>
           <pre style="background:#fafafa;padding:8px;border-radius:6px;border:1px solid #eee;white-space:pre-wrap;"><?php echo htmlspecialchars($ran_sql); ?></pre>
           <?php if ($elapsed !== null): ?>
             耗時：<?php echo htmlspecialchars($elapsed); ?> ms
@@ -106,8 +108,8 @@ hr{border:none;height:1px;background:#eee;margin:16px 0}
       <?php endif; ?>
 
       <div class="footer">
-      <a href="search.php">回到搜尋頁面</a>|
       <a href="sql.php">回到 SQL 練習頁面</a>
+      <a href="search.php">回到搜尋頁面</a>|
       </div>
     </div>
   </div>
