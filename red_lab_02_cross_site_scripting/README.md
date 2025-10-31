@@ -22,7 +22,7 @@ Step 1. 在**前景**建立並啟動 docker compose 服務
 docker compose up -d
 ```
 
-Step 2. 開啟瀏覽器並前往不同 XSS 攻擊的端點
+Step 2. 開啟瀏覽器並前往不同 XSS 攻擊的 Base URI。不同 XSS 攻擊的網站使用方式，請分別參考不同攻擊資料夾底下的 README.md。
 
 - DOM 型 XSS [http://127.0.0.1:8080](http://127.0.0.1:8080)
 - 反射型 XSS [http://127.0.0.1:8081](http://127.0.0.1:8081)
