@@ -1,0 +1,22 @@
+name: red_lab_02_cross_site_scripting
+
+services:
+  xss_dom:
+    image: nginx:latest
+    container_name: xss_dom
+    volumes:
+      - ./xss_dom:/usr/share/nginx/html
+    ports:
+      - 8080:80
+  
+  reflected_xss:
+    build: .\xss_reflected
+    container_name: xss_reflected
+    ports:
+      - 8081:80
+
+  stored_xss:
+    build: .\xss_stored
+    container_name: xss_stored
+    ports:
+      - 8082:80

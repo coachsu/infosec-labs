@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <title>JavaScript範例</title>
+  </head>
+  <body>
+	<h1>範例#03:透過 Document.write() 新增網頁元素</h1>
+	<input type="button" onclick="addText()" value="確定" />
+	<script>
+		function addText() {
+      if(confirm('增加網頁元素')) {
+        const t = document.createElement("h1");
+        t.innerText = "新增的網頁元素";
+        document.body.appendChild(t);
+      }
+    }
+	</script>
+  </body>
+</html>

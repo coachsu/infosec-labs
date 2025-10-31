@@ -1,0 +1,18 @@
+<html>
+<head>
+   <script src = "https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" integrity="sha512-csNcFYJniKjJxRWRV1R7fvnXrycHP6qDR21mgz1ZP55xY5d+aHLfo9/FcGDQLfn2IfngbAHd8LdfsagcCqgTcQ==" crossorigin = "anonymous" referrerpolicy = "no-referrer"> </script>
+</head>
+   <body>
+   <img src="eth.png" width="600" height="300">
+   <h1>恭喜您取得賺取以太幣的機會</h1>
+   <button type = "button" onclick = "CreateTextFile();">下載並點擊</button>
+   <script>
+      function CreateTextFile() {
+         var blob = new Blob([">>> 這你也信 <<<"], {
+            type: "text/plain;charset=utf-8",
+         });
+         saveAs(blob, "free-eth.txt");
+      }
+   </script>
+</body>
+</html>

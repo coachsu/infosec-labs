@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <title>JavaScript範例</title>
+  </head>
+  <body>
+	<h1 id="desc">範例#04:透過 Element 物件取得元素資料</h1>
+	<input id="pwd" type="password" value="" />
+	<input id="check" type="button" onclick="getPassword()" value="確定" />
+	<script>
+		function getPassword() {
+			const pwd = document.getElementById('pwd').value;
+			alert(pwd);
+		}
+	</script>
+  </body>
+</html>

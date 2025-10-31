@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JS 示範案例</title>
+  <meta name="description" content="JS 示範案例。">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero" aria-label="JS 示範案例">
+      <div class="title">
+        <div class="orb" aria-hidden="true"></div>
+        <div>
+          <h1>JS 示範案例</h1>
+          <p class="subtitle">此頁會連結到不同的 JS 示範案例</p>
+        </div>
+      </div>
+
+      <div class="grid" id="cards">
+        <a class="card" href="./JS_EX01.html" data-tags="彈出視窗" aria-label="打開 JS_EX01.html">
+          <span class="badge"><span class="num">1</span> JS_EX01.html</span>
+          <h3>彈出視窗</h3>
+          <p>透過 JS 產生各種彈出視窗</p>
+          <div class="meta"><span class="tag">Window</span></div>
+        </a>
+        <a class="card" href="./JS_EX02.html" data-tags="函式 事件 監聽 DOM click" aria-label="打開 JS_EX02.html">
+          <span class="badge"><span class="num">2</span> JS_EX02.html</span>
+          <h3>事件與函式</h3>
+          <p>addEventListener、參數/回傳，製作可互動按鈕。</p>
+          <div class="meta"><span class="tag">Events</span><span class="tag">Functions</span></div>
+        </a>
+        <a class="card" href="./JS_EX03.html" data-tags="DOM 選擇 節點 class 切換" aria-label="打開 JS_EX03.html">
+          <span class="badge"><span class="num">3</span> JS_EX03.html</span>
+          <h3>DOM 操作</h3>
+          <p>查詢節點、改文字/屬性/樣式，class 切換實作。</p>
+          <div class="meta"><span class="tag">DOM</span><span class="tag">ClassList</span></div>
+        </a>
+        <a class="card" href="./JS_EX04.html" data-tags="陣列 迭代 map filter render" aria-label="打開 JS_EX04.html">
+          <span class="badge"><span class="num">4</span> JS_EX04.html</span>
+          <h3>資料與陣列</h3>
+          <p>map / filter / reduce，將資料渲染成清單。</p>
+          <div class="meta"><span class="tag">Array</span><span class="tag">Rendering</span></div>
+        </a>
+        <a class="card" href="./JS_EX05.html" data-tags="非同步 fetch promise api" aria-label="打開 JS_EX05.html">
+          <span class="badge"><span class="num">5</span> JS_EX05.html</span>
+          <h3>非同步與擷取資料</h3>
+          <p>fetch 與 Promise 基本流程，顯示載入與錯誤狀態。</p>
+          <div class="meta"><span class="tag">Fetch</span><span class="tag">Async</span></div>
+        </a>
+      </div>
+      <p class="footer">放置此檔與 <code>JS_EX01.html</code> ~ <code>JS_EX05.html</code> 在同一資料夾即可使用。</p>
+    </section>
+  </div>
+
+  <script>
+    // 搜尋過濾
+    const q = document.getElementById('q');
+    const cards = Array.from(document.querySelectorAll('#cards .card'));
+    q.addEventListener('input', () => {
+      const v = q.value.trim().toLowerCase();
+      cards.forEach(c => {
+        const text = (c.innerText + ' ' + (c.dataset.tags||'')).toLowerCase();
+        c.style.display = text.includes(v) ? '' : 'none';
+      });
+    });
+    // 快速鍵 1~5 開啟對應範例
+    window.addEventListener('keydown', (e) => {
+      const n = Number(e.key);
+      if(n>=1 && n<=5){
+        const el = cards[n-1];
+        if(el){ window.location.href = el.getAttribute('href'); }
+      }
+    });
+  </script>
+</body>
+</html>

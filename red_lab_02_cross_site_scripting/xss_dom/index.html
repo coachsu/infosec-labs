@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+		<title>DOM XSS</title>
+    </head>
+    <body>
+		<script>
+			//取得URL中#後的內容
+			var name = decodeURI(location.hash.slice(1));  
+			//在網頁中加入內容
+			document.write("Hello, " + name + "<br>"); 
+		</script>
+    </body>
+</html>

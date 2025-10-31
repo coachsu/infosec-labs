@@ -1,0 +1,17 @@
+<html>
+  <head>
+    <title>JavaScript範例</title>
+  </head>
+  <body>
+	<h1>範例#02:透過 Element.remove() 移除網頁元素</h1>
+  <h3 id="t1">網頁元素</h3>
+	<input type="button" onclick="removeText()" value="確定" />
+	<script>
+		function removeText() {
+      if(confirm('刪除網頁元素')) {
+        document.getElementById('t1').remove();
+      }
+    }
+	</script>
+  </body>
+</html>
