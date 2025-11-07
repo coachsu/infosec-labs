@@ -1,0 +1,60 @@
+version: "3.8"
+services:
+
+  db:
+    image: postgres:15-alpine
+    container_name: db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - net
+
+  web:
+    build: ./app
+    container_name: web
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      - db
+    networks:
+      - net
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    restart: unless-stopped
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - net
+
+  nmap:
+    image: instrumentisto/nmap:latest
+    container_name: nmap
+    entrypoint: ["/bin/sh", "-c", "sleep infinity"]
+    tty: true
+    networks:
+      - net
+
+volumes:
+  db_data:
+
+networks:
+  net:
+    driver: bridge
