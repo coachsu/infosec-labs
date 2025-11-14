@@ -11,7 +11,7 @@ Information Security Laboratory
 3. 了解 Linux 系統操作
 
 ## 實驗列表
-### 紅隊
-1. red_01_sql_injection (SQL 注入攻擊)
-2. red_02_cross_site_scripting (跨站指令碼攻擊)
-3. red_03_sniffing (監聽)
+### 紅隊(Read Team)
+1. red_lab_01_sql_injection (SQL 注入攻擊)
+2. red_lab_02_cross_site_scripting (跨站指令碼攻擊)
+3. red_lab_03_sniffing (監聽)
