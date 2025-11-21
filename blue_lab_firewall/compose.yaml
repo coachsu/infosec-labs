@@ -1,0 +1,109 @@
+name: blue_lab_01_firewall
+
+services:
+  firewall:
+    build: ./firewall
+    container_name: firewall
+    cap_add:
+      - NET_ADMIN
+    networks:
+      wan:
+        ipv4_address: 172.20.0.254
+      lan:
+        ipv4_address: 172.21.0.254
+    restart: unless-stopped
+
+  server:
+    build: ./server
+    container_name: server
+    cap_add:
+      - NET_ADMIN
+    networks:
+      lan:
+        ipv4_address: 172.21.0.10
+    depends_on:
+      - firewall
+    restart: unless-stopped
+
+  client1:
+    build: ./client
+    container_name: client1
+    cap_add:
+      - NET_ADMIN
+    networks:
+      wan:
+        ipv4_address: 172.20.0.10
+    depends_on:
+      - firewall
+    command: >
+      sh -c "
+        # 等待 network 與 firewall interface 穩定
+        i=0;
+        while [ $$i -lt 30 ]; do
+          ip route show && break || sleep 1; i=$$((i+1));
+        done;
+        # 刪除預設路由（若沒有也不會失敗）
+        ip route del default 2>/dev/null || true;
+        # 新增經由 firewall 的預設路由（若已存在也忽略錯誤）
+        ip route add default via 172.20.0.254 2>/dev/null || true;
+        tail -f /dev/null
+      "
+    restart: unless-stopped
+
+  client2:
+    build: ./client
+    container_name: client2
+    cap_add:
+      - NET_ADMIN
+    networks:
+      wan:
+        ipv4_address: 172.20.0.11
+    depends_on:
+      - firewall
+    command: >
+      sh -c "
+        i=0;
+        while [ $$i -lt 30 ]; do
+          ip route show && break || sleep 1; i=$$((i+1));
+        done;
+        ip route del default 2>/dev/null || true;
+        ip route add default via 172.20.0.254 2>/dev/null || true;
+        tail -f /dev/null
+      "
+    restart: unless-stopped
+
+  client3:
+    build: ./client
+    container_name: client3
+    networks:
+      wan:
+        ipv4_address: 172.20.0.12
+    depends_on:
+      - firewall
+    command: >
+      sh -c "
+        # 等待 network 與 firewall interface 穩定
+        i=0;
+        while [ $$i -lt 30 ]; do
+          ip route show && break || sleep 1; i=$$((i+1));
+        done;
+        # 刪除預設路由（若沒有也不會失敗）
+        ip route del default 2>/dev/null || true;
+        # 新增經由 firewall 的預設路由（若已存在也忽略錯誤）
+        ip route add default via 172.20.0.254 2>/dev/null || true;
+        tail -f /dev/null
+      "
+    restart: unless-stopped
+
+networks:
+  wan:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+  lan:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/24
