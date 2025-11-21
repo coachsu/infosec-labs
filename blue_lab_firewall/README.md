@@ -13,7 +13,7 @@
 - blue_lab_01_firewall
   - client (客戶端 / nmap, ping, curl, ssh, ftp)
   - firewall (防火牆 / iptables)
-  - server (伺服器 / http, sshd, ssh)
+  - server (伺服器 / http, sshd, ftp)
     - 帳號: labuser
     - 密碼: labpass
   - compose.yaml
@@ -137,34 +137,3 @@ Step 1. 完成以下問題
 5. 實驗過程與結果(針對每個實驗的每個問題)
 6. 結論與心得
 8. 參考文獻
-
-
-
-
-# security-firewall-lab
-
-Docker Compose lab that demonstrates a simple network-level firewall (iptables) between clients and an internal server.
-
-## 結構
-- firewall/: firewall container (iptables)
-- server/: internal server (HTTP, SSH, FTP)
-- client/: client image (with nmap, curl, ping)
-
-## 快速上手
-1. 在含有 docker 與 docker compose 的環境中，解壓或 clone 此專案至一個資料夾。
-2. 在該資料夾執行：
-   ```
-   docker compose up -d --build
-   ```
-3. 進入 client：
-   ```
-   docker exec -it client1 bash
-   ```
-4. 在 client 內可以執行：
-   - `curl http://172.21.0.10`
-   - `ssh labuser@172.21.0.10` (password: labpass)
-   - `nmap 172.21.0.10`
-
-## 注意事項
-- 本實驗將 iptables 規則設定在 firewall container，容器需具備 NET_ADMIN 權限。
-- 若在某些環境中需要模擬更接近實際路由，可能須在 host 端或使用 macvlan networks。

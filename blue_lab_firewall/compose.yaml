@@ -1,4 +1,4 @@
-name: blue_lab_01_firewall
+name: blue_lab_firewall
 
 services:
   firewall:
@@ -75,6 +75,8 @@ services:
   client3:
     build: ./client
     container_name: client3
+    cap_add:
+      - NET_ADMIN
     networks:
       wan:
         ipv4_address: 172.20.0.12
