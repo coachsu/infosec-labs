@@ -1,6 +1,6 @@
 FROM debian:12-slim
 
-RUN apt-get update && apt-get install -y nginx openssh-server vsftpd && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y nginx openssh-server vsftpd net-tools iproute2 iputils-ping && rm -rf /var/lib/apt/lists/*
 
 # create SSH user
 RUN useradd -m labuser && echo "labuser:labpass" | chpasswd

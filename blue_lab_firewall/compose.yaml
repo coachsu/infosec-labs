@@ -6,6 +6,8 @@ services:
     container_name: firewall
     cap_add:
       - NET_ADMIN
+    sysctls:
+      - net.ipv4.ip_forward=1
     networks:
       wan:
         ipv4_address: 172.20.0.254
