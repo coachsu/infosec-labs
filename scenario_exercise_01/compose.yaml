@@ -1,0 +1,23 @@
+name: infosec-lab-114-midterm
+
+services:
+  server:
+    build: ./server
+    container_name: server
+    ports:
+      - "15000-15100:15000-15100"  # Random Flask port range
+    networks:
+      - labnet
+
+  attacker:
+    build: ./attacker
+    container_name: attacker
+    depends_on:
+      - server
+    tty: true
+    networks:
+      - labnet
+
+networks:
+  labnet:
+    driver: bridge
