@@ -15,6 +15,7 @@ Information Security Laboratory
 1. red_lab_sql_injection (SQL 注入攻擊)
 2. red_lab_cross_site_scripting (跨站指令碼攻擊)
 3. red_lab_sniffing (監聽)
+4. red_lab_denial_of_service (阻斷服務攻擊)
 
 ### 紅隊(Blue Team)
 1. blue_lab_firewall (防火牆)

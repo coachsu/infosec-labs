@@ -1,0 +1,26 @@
+name: red_lab_denial_of_service
+
+services:
+  web:
+    build: ./web
+    container_name: web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./web/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./web/index.html:/usr/share/nginx/html/index.html:ro
+    networks:
+      - dosnet
+
+  attacker:
+    build: ./attacker
+    container_name: attacker
+    depends_on:
+      - web
+    tty: true
+    stdin_open: true
+    networks:
+      - dosnet
+networks:
+  dosnet:
+    driver: bridge
